@@ -75,6 +75,7 @@ const colorTexture = device.createTexture({
         GPUTextureUsage.RENDER_ATTACHMENT |
         GPUTextureUsage.COPY_DST,
     format: colorFormat, // 'rgba8unorm' -> 8bit unsigned intiger, normalized for floats [0, 1]
+    mipLevelCount: 2,
 
 });
 
@@ -85,9 +86,17 @@ device.queue.copyExternalImageToTexture(
     [imageBitmap.width, imageBitmap.height]
 );
 
+// 4. Create sampler
+const colorSampler = device.createSampler({
+    mipmapFilter: 'linear',
+    minFilter: 'linear',
+    magFliter: 'nearest',
+});
+
+
 // Create vertex buffers 
 const vertices = new Float32Array([
-    // position      // colors   // indicies
+    // position      // colors -> technically texture coords now
     -1, -1, -1, 1,   /*Color: */  1, 0, 0, 1, // 0
     1, -1, -1, 1,   /*Color: */  0, 1, 0, 1, // 1
     -1, 1, -1, 1,   /*Color: */  0, 0, 1, 1, // 2
@@ -135,16 +144,17 @@ const uniform = device.createBuffer({
 // Create Bind group 
 const bindGroup = device.createBindGroup({
     layout: pipeline.getBindGroupLayout(0),
-    entries: [{
-        binding: 0,
-        resource: { buffer: uniform, },
-    },],
+    entries: [
+        { binding: 0, resource: { buffer: uniform, }, },
+        { binding: 1, resource: colorTexture.createView() },
+        { binding: 2, resource: colorSampler },
+    ],
 });
 
 function render() {
     const time = performance.now() / 1000;
     const modelMatrix = mat4.create().rotateX(time * 0.7).rotateY(time);
-    const viewMatrix = mat4.create().translate([0, 0, 5]).invert();
+    const viewMatrix = mat4.create().translate([0, 0, 3]).invert();
     const projectionMatrix = mat4.create().perspectiveZO(1, 1, 0.01, 100);
 
     const matrix = mat4.create()
