@@ -63,7 +63,9 @@ const depthTexture = device.createTexture({
 
 // Prepare color texture 
 // 1. fetch the texture from the server
-const texture = await fetch('base.png').then(response => response.blob());
+const imageBitmap = await fetch('base.png')
+    .then(response => response.blob())
+    .then(blob => createImageBitmap(blob));
 
 
 
@@ -71,14 +73,14 @@ const texture = await fetch('base.png').then(response => response.blob());
 const vertices = new Float32Array([
     // position      // colors   // indicies
     -1, -1, -1, 1,   /*Color: */  1, 0, 0, 1, // 0
-    1,  -1, -1, 1,   /*Color: */  0, 1, 0, 1, // 1
-    -1,  1, -1, 1,   /*Color: */  0, 0, 1, 1, // 2
-    1,   1, -1, 1,   /*Color: */  1, 1, 0, 1, // 3
+    1, -1, -1, 1,   /*Color: */  0, 1, 0, 1, // 1
+    -1, 1, -1, 1,   /*Color: */  0, 0, 1, 1, // 2
+    1, 1, -1, 1,   /*Color: */  1, 1, 0, 1, // 3
 
     -1, -1, 1, 1,   /*Color: */  1, 0, 0, 1, // 0
-    1,  -1, 1, 1,   /*Color: */  0, 1, 0, 1, // 1
-    -1,  1, 1, 1,   /*Color: */  0, 0, 1, 1, // 2
-    1,   1, 1, 1,   /*Color: */  1, 1, 0, 1, // 3
+    1, -1, 1, 1,   /*Color: */  0, 1, 0, 1, // 1
+    -1, 1, 1, 1,   /*Color: */  0, 0, 1, 1, // 2
+    1, 1, 1, 1,   /*Color: */  1, 1, 0, 1, // 3
 
 
 ]);
