@@ -1,5 +1,5 @@
 import { mat4 } from "./glm.js";
-const format = 'rgba8unorm'
+const colorFormat = 'rgba8unorm'
 
 // Initialize WebGPU
 const adapter = await navigator.gpu.requestAdapter();
@@ -8,7 +8,7 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('webgpu');
 ctx.configure({
     device,
-    format,
+    format: colorFormat,
 });
 
 // Load shaders
@@ -41,7 +41,7 @@ const pipeline = device.createRenderPipeline({
     },
     fragment: {
         module,
-        targets: [{ format, }]
+        targets: [{ format: colorFormat, }]
     },
     // conf globinske slike
     depthStencil: {
@@ -67,6 +67,18 @@ const imageBitmap = await fetch('base.png')
     .then(response => response.blob())
     .then(blob => createImageBitmap(blob));
 
+// 2. Create a texture
+const colorTexture = device.createTexture({
+    size: [imageBitmap.width, imageBitmap.height],
+    usage:
+        GPUTextureUsage.TEXTURE_BINDING |
+        GPUTextureUsage.RENDER_ATTACHMENT |
+        GPUTextureUsage.COPY_DST,
+    format: colorFormat, // 'rgba8unorm' -> 8bit unsigned intiger, normalized for floats [0, 1]
+
+});
+
+// 3. Transfer data
 
 
 // Create vertex buffers 
