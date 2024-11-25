@@ -79,7 +79,11 @@ const colorTexture = device.createTexture({
 });
 
 // 3. Transfer data
-
+device.queue.copyExternalImageToTexture(
+    { source: imageBitmap, },
+    { texture: colorTexture, },
+    [imageBitmap.width, imageBitmap.height]
+);
 
 // Create vertex buffers 
 const vertices = new Float32Array([
